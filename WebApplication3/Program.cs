@@ -30,6 +30,9 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 
 //registering repository and interface
 builder.Services.AddScoped<IStockRepository,CreateStockRepository>();
+builder.Services.AddScoped<ICommentRepostiory, CommentRepostitoy>();
+
+//builder.Services.AddScoped<ICommentRepostiory, CommentRepostitoy>();
 
 var app = builder.Build();
 
