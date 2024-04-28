@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using WebApplication3.Data;
+using WebApplication3.DTOs.Stocks;
+using WebApplication3.Interfaces;
 using WebApplication3.Mappers;
 
 namespace WebApplication3.Controllers
@@ -12,9 +15,11 @@ namespace WebApplication3.Controllers
     {
 
         private readonly ApplicationDBContext _dbContext;
+        private readonly IStockRepository _stockRepository;
 
-        public StockController(ApplicationDBContext applicationDBContext) {
+        public StockController(ApplicationDBContext applicationDBContext, IStockRepository stockRepository) {
 
+            _stockRepository = stockRepository; 
             _dbContext = applicationDBContext;
 
 
@@ -23,21 +28,23 @@ namespace WebApplication3.Controllers
         }
 
             [HttpGet] //definnig a get method
-        public IActionResult GetAll()
+        public async Task <IActionResult>  GetAll()
         {
 
-            var stocks = _dbContext.Stocks.ToList().Select(e=>e.ToStockDTO()); //select is simialr to dart map method 
-            return Ok(stocks); //200 
+            var stocks = await _stockRepository.GetAllAsync(); // invoke repo
+            var result = stocks.Select(stocks=>stocks.ToStockDTO());
+            
+            return Ok(result); //200 
 
         }
 
         [HttpGet("{id}")]  //ask for id in the url
 
-public IActionResult GetStockById([FromRoute] int id)
+public async Task<IActionResult> GetStockById([FromRoute] int id)
         {
 
 
-            var stock = _dbContext.Stocks.SingleOrDefault(e => e.StockId == id); //filter based on the id provided
+            var stock = await _stockRepository.GetStockAsync(id); //filter based on the id provided
 
             if(stock == null)
             {
@@ -47,5 +54,68 @@ public IActionResult GetStockById([FromRoute] int id)
             return Ok(stock.ToStockDTO());  //200 
 
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] PostStockDTO postStockDTO)
+        {
+            var dto = postStockDTO.ToPostStockDTO();
+            await _stockRepository.CreateStockAsync(dto);
+
+
+            return CreatedAtAction(nameof(GetStockById), new { id = dto.StockId }, dto.ToStockDTO() );  // after successfully creating a dto object invoke the get by id method and return the data
+
+
+
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockDTO updateStockDTO)
+        {
+            //first find if object exists
+
+            var stockModel = await _stockRepository.UpdateStockAsync(id, updateStockDTO);
+
+            if (stockModel == null)
+            {
+                return NotFound();
+            }
+
+
+
+            return Ok(stockModel.ToStockDTO());
+
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            //first check if object exists
+
+            var stock = await _stockRepository.DeleteStockAsync(id);
+
+            if(stock == null)
+            {
+                return NotFound();
+            }
+
+            
+
+            return Ok();
+
+
+
+
+
+
+        }
+    
+    
     }
+
+
+    
 }

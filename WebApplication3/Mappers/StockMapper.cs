@@ -30,12 +30,13 @@ namespace WebApplication3.Mappers
 
         }
 
-        public static PostStockDTO ToPostStockDTO(Stock stock)
+        public static Stock ToPostStockDTO(this PostStockDTO stock)
         {
-            return new PostStockDTO { 
+            return new Stock { 
             
                 CompanyName=stock.CompanyName,
                 
+
                 Industry =stock.Industry,
                 LastDiv = stock.LastDiv,
                 MarketCap = stock.MarketCap,

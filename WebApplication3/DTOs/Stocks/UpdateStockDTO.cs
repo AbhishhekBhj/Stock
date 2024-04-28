@@ -1,12 +1,7 @@
 ﻿namespace WebApplication3.DTOs.Stocks
 {
-
-    //this dto will be used to restrict the data fields posted by the user
-    public class PostStockDTO
+    public class UpdateStockDTO
     {
-
-        //user should not be able to post id and commments
-
         public string Symbol { get; set; } = string.Empty; //avoid null refernce
 
 
@@ -22,4 +17,3 @@
         public decimal PurchasePrice { get; set; }
     }
 }
-

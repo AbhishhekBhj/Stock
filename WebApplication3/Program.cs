@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebApplication3.Data;
+using WebApplication3.Interfaces;
+using WebApplication3.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +27,9 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 
 
 });
+
+//registering repository and interface
+builder.Services.AddScoped<IStockRepository,CreateStockRepository>();
 
 var app = builder.Build();
 
