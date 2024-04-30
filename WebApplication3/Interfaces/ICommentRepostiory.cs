@@ -7,6 +7,6 @@ namespace WebApplication3.Interfaces
     {
         public  Task<List<Comment>> GetAllCommentsAsync();
 
-        public Task<Comment?> GetCommentById(int id);
+        public Task<Comment?> GetCommentByIdAsync(int id);
     }
 }

@@ -53,7 +53,7 @@ namespace WebApplication3.Repository
         public async Task<List<Stock>> GetAllAsync()
         {
 
-            return await _dbContext.Stocks.ToListAsync();
+            return await _dbContext.Stocks.Include(e=>e.Comments).ToListAsync();
 
 
 
@@ -61,7 +61,7 @@ namespace WebApplication3.Repository
 
         public async Task<Stock?> GetStockAsync(int id)
         {
-            var stock = _dbContext.Stocks.FirstOrDefaultAsync(e => e.StockId == id);
+            var stock = _dbContext.Stocks.Include(e=>e.Comments).FirstOrDefaultAsync(e => e.StockId == id);
 
             if (stock == null)
             {

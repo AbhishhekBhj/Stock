@@ -23,7 +23,9 @@ namespace WebApplication3.Mappers
                 LastDiv = stock.LastDiv
                 ,    MarketCap = stock.MarketCap,
                 PurchasePrice = stock.PurchasePrice,
-                Symbol = stock.Symbol
+                Symbol = stock.Symbol,
+                
+                Comments  = stock.Comments.Select(e=>e.ToCommentDTO()).ToList()
 
 
             };

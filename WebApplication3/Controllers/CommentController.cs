@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApplication3.Data;
 using WebApplication3.Interfaces;
+using WebApplication3.Mappers;
 using WebApplication3.Repository;
 
 namespace WebApplication3.Controllers
@@ -10,7 +11,6 @@ namespace WebApplication3.Controllers
     [ApiController]
     public class CommentController : ControllerBase
     {
-        private readonly ApplicationDBContext applicationDBContext;
         private readonly ICommentRepostiory commentRepostitoy;
 
         public CommentController(ICommentRepostiory comment)
@@ -24,31 +24,27 @@ namespace WebApplication3.Controllers
         public async Task<IActionResult> GetAllCommentAsync()
         {
             var comments = await commentRepostitoy.GetAllCommentsAsync();
-            return Ok(comments);
+            var commentDTO = comments.Select(e=>e.ToCommentDTO());
+            
+            return Ok(commentDTO);
         
         }
-        
 
-        [HttpGet ("{id}")]
-        
+
+        [HttpGet("{id}")]
+
         public async Task<IActionResult> GetCommentById([FromRoute] int id)
         {
-            var comment = commentRepostitoy.GetCommentById(id);
-            return Ok(comment);
+            var comment =  await commentRepostitoy.GetCommentByIdAsync(id);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(comment.ToCommentDTO());
         }
 
-        //public IActionResult GetCommentByID([FromRoute ] int id)
-        //{
-        //    var comment = applicationDBContext.Comments.FirstOrDefault(e => e.CommentID == id);
-
-        //    if (comment == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return Ok(comment);
-
-
-        //}
+        
 
 
 

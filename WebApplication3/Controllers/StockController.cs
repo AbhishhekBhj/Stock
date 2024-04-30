@@ -6,6 +6,7 @@ using WebApplication3.Data;
 using WebApplication3.DTOs.Stocks;
 using WebApplication3.Interfaces;
 using WebApplication3.Mappers;
+using WebApplication3.Models;
 
 namespace WebApplication3.Controllers
 {
@@ -40,20 +41,44 @@ namespace WebApplication3.Controllers
 
         [HttpGet("{id}")]  //ask for id in the url
 
-public async Task<IActionResult> GetStockById([FromRoute] int id)
+        public async Task<IActionResult> GetStockById([FromRoute] int id)
         {
-
-
-            var stock = await _stockRepository.GetStockAsync(id); //filter based on the id provided
-
-            if(stock == null)
+            try
             {
-                return NotFound(); //404 
+                var stock = await _stockRepository.GetStockAsync(id); // Filter based on the id provided
+
+                if (stock == null)
+                {
+                    // If stock is not found, create a ResponseModel for the NotFound response
+                    ResponseModel model = new ResponseModel
+                    {
+                        Message = $"Stock with id {id} not found",
+                        StatusCode = 404,
+                        Data = null // You can optionally set data to null or include additional information
+                    };
+
+                    // Return a NotFound response with the ResponseModel
+                    return StatusCode(StatusCodes.Status404NotFound, model);
+                }
+
+                
+                return Ok(stock.ToStockDTO()); 
             }
+            catch (Exception ex)
+            {
+                
+                ResponseModel rm = new ResponseModel
+                {
+                    Message = ex.ToString(),
+                    StatusCode = 500,
+                    Data = new { tokenNo = "" }
+                };
 
-            return Ok(stock.ToStockDTO());  //200 
-
+                // Return an InternalServerError response with the ResponseModel
+                return StatusCode(StatusCodes.Status500InternalServerError, rm);
+            }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] PostStockDTO postStockDTO)

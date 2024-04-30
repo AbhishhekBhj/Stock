@@ -24,7 +24,7 @@ namespace WebApplication3.Repository
 
         }
 
-        public async Task<Comment?> GetCommentById(int id)
+        public async Task<Comment?> GetCommentByIdAsync(int id)
         {
             var comment = await applicationDBContext.Comments.SingleOrDefaultAsync(e => e.CommentID == id);
             if (comment == null)

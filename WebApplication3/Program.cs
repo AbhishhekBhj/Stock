@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using WebApplication3.Data;
 using WebApplication3.Interfaces;
 using WebApplication3.Repository;
@@ -14,6 +15,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//adding newtonsoft as te serializeer
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+    });
 
 //adding db context
 
